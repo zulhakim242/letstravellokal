@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+        <style>
+            #mapid { width: 616px;
+                    height: 416px;
+                    position: fixed;}
+
+            /* Dropdown Button */
+                .dropbtn {
+                background-color: #3498DB;
+                color: white;
+                padding: 16px;
+                font-size: 16px;
+                border: none;
+                cursor: pointer;
+                }
+
+                /* Dropdown button on hover & focus */
+                .dropbtn:hover, .dropbtn:focus {
+                background-color: #2980B9;
+                }
+
+                /* The container <div> - needed to position the dropdown content */
+                .dropdown {
+                position: relative;
+                display: inline-block;
+                }
+
+                /* Dropdown Content (Hidden by Default) */
+                .dropdown-content {
+                display: none;
+                position: absolute;
+                background-color: #f1f1f1;
+                min-width: 160px;
+                box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                z-index: 1;
+                }
+
+                /* Links inside the dropdown */
+                .dropdown-content a {
+                color: black;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                }
+
+                /* Change color of dropdown links on hover */
+                .dropdown-content a:hover {background-color: #ddd}
+
+                /* Show the dropdown menu (use JS to add this class to the .dropdown-content container when the user clicks on the dropdown button) */
+                .show {display:block;}
+        </style>
+        
+        
+        <body>
+            <!-- Make sure you put this AFTER Leaflet's CSS -->
+            <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+            integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+            crossorigin=""></script>
+            <script src="js/leaflet.ajax.js"></script>
+            <script type="text/javascript"></script>
+            
+            <select id="selectState" onchange="update()">
+                <option value=0 selected disabled hidden>Select State:</option>
+                <option value=1>Johor</option>
+                <option value=2>Kedah</option>
+                <option value=3>Kelantan</option>
+                <option value=4>Melaka</option>
+                <option value=5>Negeri Sembilan</option>
+                <option value=6>Pahang</option>
+                <option value=7>Penang</option>
+                <option value=8>Perak</option>
+                <option value=9>Perlis</option>
+                <option value=10>Sabah</option>
+                <option value=11>Sarawak</option>
+                <option value=12>Selangor</option>
+                <option value=13>Terengganu</option>
+                <option value=14>Kuala Lumpur</option>
+                <option value=15>Labuan</option>
+                <option value=16>Putrajaya</option>
+            </select>
+
+            <div id = "mapid"></div>
+                <script>
+                    var value = 0;
+                    var states = [
+                                ["Malaysia", 4.2105, 101.9758],
+                                ["Johor",1.937344, 103.366585],
+                                ["Kedah", 6.155672, 100.569649],
+                                ["Kelantan", 6.125397, 102.238068],
+                                ["Melaka", 2.206414407, 102.2464615],
+                                ["Negeri Sembilan",2.7258, 101.9424],
+                                ["Pahang", 4.18400112, 102.0420006],
+                                ["Penang", 5.417071146, 100.4000109],
+                                ["Perak", 4.693950, 101.117577,],
+                                ["Perlis", 6.429708, 100.269844],
+                                ["Sabah", 5.420404, 116.796783],
+                                ["Sarawak", 3.16640749, 113.0359838],
+                                ["Selangor", 3.066695996, 101.5499977],
+                                ["Terengganu", 4.233241596, 103.4478869],
+                                ["Kuala Lumpur", 3.1390, 101.6869],
+                                ["Labuan", 5.2831, 115.2308],
+                                ["Putrajaya", 2.9264, 101.6964]
+                            ];
+            
+                    var mymap = L.map('mapid').setView([ 4.2105, 101.9758 ], 6);
+
+                    var LayerKita = L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=b4deh4qnPb1XTqsLNuNN', {
+                        maxZoom: 18,
+                        tileSize: 512,
+                        zoomOffset: -1,                  
+                        attribution: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> <a href="https://www.openstreetmap.org/copyright" target="_blank">&copy; OpenStreetMap contributors</a>',
+                    });
+
+                    mymap.addLayer(LayerKita);
+                
+                    // var marker = L.marker([4.2105, 101.9758]).addTo(mymap);
+                    // marker.bindPopup("<b>Hello world!</b><br>I am a popup.");
+                    
+                    function update() {
+                        var select = document.getElementById('selectState');
+                        var value = select.options[select.selectedIndex].value;
+                        console.log(value);
+                        if(value==0) mymap.flyTo(new L.LatLng(states[value][1], states[value][2]), 6);
+                        else if(value==9) mymap.flyTo(new L.LatLng(states[value][1], states[value][2]), 10);
+                        else if(value<14) mymap.flyTo(new L.LatLng(states[value][1], states[value][2]), 9);
+                        else mymap.flyTo(new L.LatLng(states[value][1], states[value][2]), 10);
+                        //mymap.flyTo(new L.LatLng(states[value][1], states[value][2]), 8);
+                        
+                    }
+                    update();
+
+                    var locations= [["dE Mesra Villa", 6.430859021473981, 100.21508840838129],
+                                    ["Hotel Soo Guan Villa Jejawi", 6.434801129857031, 100.23297411301283],
+                                    ["Wood Valley Lodge, Perlis", 6.471986187621564, 100.25872331900301],
+                                    ["Damai D'Homestay", 6.470780654171637, 100.19673885416525],
+                                    ["Serambi Homestay Kg Pondok", 6.452553384723621, 100.1932993916056],
+                                    ["T Hotel Kuala Perlis", 6.398511441499181, 100.12822357672992],
+                                    ["The Zuley Heritage Hotel", 6.399448340852452, 100.13053337030937],
+                                    ["Savana Hotel", 6.397012398960536, 100.13326741168912],
+                                    ["Putra Brasmana Hotel", 6.3972934697715065, 100.12902493368607],
+                                    ["D'View Hotel & Guest Houses", 6.39190625222702, 100.13425732356056],
+                                    ["Noor Boutique Hotel", 6.397012398897154, 100.14401502323751]];
+                    
+                    for (var i = 0; i < locations.length; i++) {
+                    marker = new L.marker([locations[i][1], locations[i][2]])
+                        .bindPopup(locations[i][0])
+                        .addTo(mymap);
+                    }
+
+                    var myStyle = {
+                        "color": "#ffff00",
+                        "weight": 1,
+                        "opacity": 0.9
+                    };
+
+
+                    function popUp(f, l){
+                        var out = [];
+                        if (f.properties){
+                            //for(key in f.properties){
+                                // console.log(key);
+                                // out.push(key+": "+f.properties[key]);
+                                
+                               out.push("Kuala Selangor:"+f.properties['kulsgr']);
+                            }
+                            l.bindPopup(put.join("<br />"));
+                        }
+                    //}
+
+                    var jsonTest = new L.GeoJSON.AJAX(["assets/malaysia.geojson"], {onEachFeature:popUp, style: myStyle}).addTo(mymap);
+                </script>
+        </body>
+    </head>
+</html>
